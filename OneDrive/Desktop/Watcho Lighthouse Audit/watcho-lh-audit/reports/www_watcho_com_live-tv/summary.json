@@ -1,0 +1,19 @@
+{
+  "url": "https://www.watcho.com/live-tv",
+  "runs": 3,
+  "categories": {
+    "performance": 8,
+    "accessibility": 84,
+    "bestPractices": 68,
+    "seo": 100,
+    "pwa": 0
+  },
+  "webVitals": {
+    "fcp_ms": 7124,
+    "lcp_ms": 20440,
+    "tbt_ms": 1371,
+    "cls": 0.625,
+    "tti_ms": 24028,
+    "speedIndex_ms": 15766
+  }
+}

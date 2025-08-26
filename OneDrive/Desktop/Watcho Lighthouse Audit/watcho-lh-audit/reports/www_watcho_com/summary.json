@@ -1,0 +1,19 @@
+{
+  "url": "https://www.watcho.com/",
+  "runs": 3,
+  "categories": {
+    "performance": 11,
+    "accessibility": 86,
+    "bestPractices": 71,
+    "seo": 100,
+    "pwa": 0
+  },
+  "webVitals": {
+    "fcp_ms": 7468,
+    "lcp_ms": 24245,
+    "tbt_ms": 1304,
+    "cls": 0.444,
+    "tti_ms": 31461,
+    "speedIndex_ms": 22530
+  }
+}

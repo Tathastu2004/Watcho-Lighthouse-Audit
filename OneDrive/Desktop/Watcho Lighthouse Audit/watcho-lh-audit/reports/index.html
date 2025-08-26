@@ -1,0 +1,90 @@
+<!-- reports/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lighthouse Audit Reports Index</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    h1 { color: #2c3e50; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    tr:nth-child(even) { background: #fafafa; }
+    a { color: #2980b9; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Lighthouse Audit Reports Index</h1>
+  <h2>Summary Table</h2>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Page</th>
+        <th>Performance</th>
+        <th>Accessibility</th>
+        <th>SEO</th>
+        <th>PWA</th>
+      </tr>
+    </thead>
+    <tbody id="summary-list">
+      <!-- Populated by JS -->
+    </tbody>
+  </table>
+  <h2>All Reports</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Page</th>
+        <th>Report File</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody id="report-list">
+      <!-- Populated by JS -->
+    </tbody>
+  </table>
+  <script>
+    // Map folder names to URLs (update if you add more URLs)
+    const urlMap = {
+      'www_watcho_com': 'https://www.watcho.com/',
+      'www_watcho_com_shows': 'https://www.watcho.com/shows',
+      'www_watcho_com_movies': 'https://www.watcho.com/movies',
+      'www_watcho_com_live-tv': 'https://www.watcho.com/live-tv'
+    };
+    // List of folders to scan
+    const folders = Object.keys(urlMap);
+    const summaryTbody = document.getElementById('summary-list');
+    const reportTbody = document.getElementById('report-list');
+    // Load summary.json for each folder
+      folders.forEach(folder => {
+        fetch(`${folder}/summary.json`)
+          .then(r => r.json())
+          .then(data => {
+            const tr = document.createElement('tr');
+            const cat = data.categories || {};
+            tr.innerHTML = `<td><a href="${folder}/" target="_blank">${urlMap[folder]}</a></td><td>${cat.performance ?? ''}</td><td>${cat.accessibility ?? ''}</td><td>${cat.seo ?? ''}</td><td>${cat.pwa ?? ''}</td>`;
+            summaryTbody.appendChild(tr);
+          });
+      // Also list all HTML reports in the folder
+      fetch(folder + '/')
+        .then(r => r.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const files = Array.from(doc.querySelectorAll('a')).map(a => a.getAttribute('href')).filter(f => f.endsWith('.html'));
+          files.forEach(file => {
+            // Extract timestamp from filename
+            const match = file.match(/run-(\d+)-(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})/);
+            const timestamp = match ? match[2].replace('T', ' ') : '';
+            const page = urlMap[folder] || folder;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${page}</td><td><a href="${folder}/${file}" target="_blank">${file}</a></td><td>${timestamp}</td>`;
+            reportTbody.appendChild(tr);
+          });
+        });
+    });
+  </script>
+</body>
+</html>

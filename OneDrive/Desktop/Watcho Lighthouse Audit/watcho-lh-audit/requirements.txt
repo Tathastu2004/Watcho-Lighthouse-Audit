@@ -1,0 +1,21 @@
+
+# REQUIREMENTS FOR WATCHO LIGHTHOUSE AUDIT PROJECT
+
+# System Requirements:
+# - Node.js v20.x (LTS recommended)
+# - npm (comes with Node.js)
+
+# Project Dependencies (auto-installed via npm):
+# - puppeteer
+# - lighthouse
+# - chrome-launcher
+# - dotenv
+
+# Setup Steps:
+# 1. Run `npm install` in the watcho-lh-audit directory.
+# 2. Create a `.env` file with any required environment variables (e.g., MOBILE_NUMBER).
+# 3. Run the audit with `npm run audit`.
+# 4. To open all reports at once, run `node open-reports.js`.
+# 5. View the summary and all reports in `reports/index.html`.
+
+# All dependencies are managed in package.json. No Python dependencies are required unless you add Python scripts.

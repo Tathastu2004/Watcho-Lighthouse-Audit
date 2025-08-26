@@ -1,0 +1,19 @@
+{
+  "url": "https://www.watcho.com/shows",
+  "runs": 3,
+  "categories": {
+    "performance": 19,
+    "accessibility": 84,
+    "bestPractices": 71,
+    "seo": 100,
+    "pwa": 0
+  },
+  "webVitals": {
+    "fcp_ms": 6175,
+    "lcp_ms": 18973,
+    "tbt_ms": 1097,
+    "cls": 0.404,
+    "tti_ms": 25771,
+    "speedIndex_ms": 10206
+  }
+}
