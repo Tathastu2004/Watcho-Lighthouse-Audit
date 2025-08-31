@@ -1,19 +1,19 @@
 {
   "url": "https://www.watcho.com/movies",
-  "runs": 3,
+  "runs": 5,
   "categories": {
-    "performance": 8,
-    "accessibility": 85,
+    "performance": 4,
+    "accessibility": 90,
     "bestPractices": 68,
     "seo": 100,
     "pwa": 0
   },
   "webVitals": {
-    "fcp_ms": 7048,
-    "lcp_ms": 21769,
-    "tbt_ms": 1251,
-    "cls": 0.762,
-    "tti_ms": 26637,
-    "speedIndex_ms": 18841
+    "fcp_ms": 4929,
+    "lcp_ms": 22419,
+    "tbt_ms": 2302,
+    "cls": 1.072,
+    "tti_ms": 28248,
+    "speedIndex_ms": 20098
   }
 }

@@ -5,11 +5,13 @@ A robust, automated Lighthouse auditing solution for Watcho.com and its key page
 
 ---
 
+
 ## ⚠️ Important Usage Notes
 - In your `.env` file, the `MOBILE_NUMBER` is set to the author's phone number. **Replace it with your own** before running the audit.
 - The `RUNS` variable controls how many times Lighthouse audits each page (default is 3, and the average is taken). You can set it to 1 for a single run or increase it for more robust averages.
 - You can add more URLs to the `URLS` array in `audit.js` as needed.
 - When you run the audit, a browser window will open for manual login. **Complete the login in the browser, then return to the terminal to continue the audit process.**
+- **At the start of each audit, you will be prompted in the terminal to select either `mobile` or `desktop` mode.** This determines whether the Lighthouse audit emulates a mobile device or a desktop environment. Choose the mode that matches your testing needs or matches how you run manual audits in Chrome DevTools.
 
 ---
 

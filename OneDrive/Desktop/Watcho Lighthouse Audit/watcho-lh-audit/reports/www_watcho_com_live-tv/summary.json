@@ -1,19 +1,19 @@
 {
   "url": "https://www.watcho.com/live-tv",
-  "runs": 3,
+  "runs": 5,
   "categories": {
-    "performance": 8,
-    "accessibility": 84,
-    "bestPractices": 68,
+    "performance": 4,
+    "accessibility": 85,
+    "bestPractices": 71,
     "seo": 100,
     "pwa": 0
   },
   "webVitals": {
-    "fcp_ms": 7124,
-    "lcp_ms": 20440,
-    "tbt_ms": 1371,
-    "cls": 0.625,
-    "tti_ms": 24028,
-    "speedIndex_ms": 15766
+    "fcp_ms": 6084,
+    "lcp_ms": 23428,
+    "tbt_ms": 2509,
+    "cls": 0.686,
+    "tti_ms": 25859,
+    "speedIndex_ms": 16672
   }
 }

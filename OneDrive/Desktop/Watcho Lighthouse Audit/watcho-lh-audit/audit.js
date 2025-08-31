@@ -1,9 +1,11 @@
-// Log Puppeteer version for debugging (compatible with all Node.js versions)
+// Log Puppeteer and Lighthouse version for debugging (compatible with all Node.js versions)
 try {
   const puppeteerPkg = JSON.parse(fs.readFileSync('./node_modules/puppeteer/package.json', 'utf-8'));
   console.log('Using Puppeteer version:', puppeteerPkg.version);
+  const lighthousePkg = JSON.parse(fs.readFileSync('./node_modules/lighthouse/package.json', 'utf-8'));
+  console.log('Using Lighthouse version:', lighthousePkg.version);
 } catch (e) {
-  console.log('Could not determine Puppeteer version:', e.message);
+  console.log('Could not determine Puppeteer/Lighthouse version:', e.message);
 }
 // Log Puppeteer version for debugging
 // audit.js
@@ -11,13 +13,10 @@ import 'dotenv/config';
 import fs from 'fs';
 import fsp from 'fs/promises';
 import path from 'path';
-let puppeteer;
-try {
-  puppeteer = (await import('puppeteer')).default;
-} catch (e) {
-  console.error('Failed to import Puppeteer:', e);
-  process.exit(1);
-}
+import puppeteerExtra from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+puppeteerExtra.use(StealthPlugin());
+const puppeteer = puppeteerExtra;
 import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 import readline from 'readline';
@@ -48,8 +47,22 @@ const OUT_DIR = path.resolve('./reports');
 const USER_DATA_DIR = path.resolve('./.chrome-profile');
 
 // ============ HELPERS ============
+
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const pause = (q) => new Promise(res => rl.question(q, () => res()));
+
+// Prompt for device type at the very start
+let DEVICE_TYPE = null;
+async function promptDeviceType() {
+  let answer = '';
+  while (!['mobile', 'desktop'].includes(answer)) {
+    answer = await new Promise(res => {
+      rl.question('Select device type for Lighthouse audit (mobile/desktop): ', res);
+    });
+    answer = answer.trim().toLowerCase();
+  }
+  DEVICE_TYPE = answer;
+}
 
 const ensureDir = async (dir) => {
   if (!fs.existsSync(dir)) await fsp.mkdir(dir, { recursive: true });
@@ -112,42 +125,71 @@ const averageMetrics = (runs) => {
 
 // ============ LOGIN (MANUAL OTP) ============
 async function performLogin() {
+  if (!DEVICE_TYPE) await promptDeviceType();
   console.log('Launching Chrome for manual OTP login...');
   await ensureDir(USER_DATA_DIR);
 
+  // Always use a fresh user data dir for each run
+  const tempUserDataDir = path.join('./.chrome-profile', `tmp-${Date.now()}`);
   const browser = await puppeteer.launch({
     headless: false, // show UI for OTP
-    args: [`--user-data-dir=${USER_DATA_DIR}`],
+    args: [
+      `--user-data-dir=${tempUserDataDir}`,
+      '--incognito',
+      '--disable-extensions',
+      '--disable-background-networking',
+      '--disable-default-apps',
+      '--disable-sync',
+      '--disable-translate',
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--disable-component-extensions-with-background-pages',
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+      '--disable-device-discovery-notifications',
+    ],
     defaultViewport: null
   });
 
   try {
-  const page = await browser.newPage();
+  // Use the first page (incognito if --incognito flag is set)
+  const pages = await browser.pages();
+  const page = pages[0];
   console.log('DEBUG: Puppeteer page object constructor:', page.constructor.name);
-    page.setDefaultNavigationTimeout(120000);
-    page.setDefaultTimeout(60000);
+  page.setDefaultNavigationTimeout(120000);
+  page.setDefaultTimeout(60000);
+
 
     console.log(`Navigating to login page: ${LOGIN_URL}`);
-  await page.goto(LOGIN_URL, { waitUntil: 'networkidle2' });
-  // Add a short delay to allow any JS rendering
-  await new Promise(res => setTimeout(res, 2000));
+    await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded' });
+    // Wait for the page to be interactive
+    await page.waitForFunction(() => document.readyState === 'complete', { timeout: 60000 });
+    // Add a short delay to allow any JS rendering/animations
+    await new Promise(res => setTimeout(res, 2000));
 
     // ---- Selectors you may need to tweak for Watcho's UI ----
-    // Try common patterns first. Update these if needed after inspecting the page.
     const phoneSelectors = [
-  'input[name="mobile"]'
+      'input[name="mobile"]',
+      'input[type="text"][placeholder*="mobile"]',
+      'input[type="tel"]',
     ];
 
-    // Wait for the phone input to appear for up to 10 seconds
-  await page.waitForSelector('input[name="mobile"]', { timeout: 60000 });
     let phoneField = null;
     for (const sel of phoneSelectors) {
-      const handle = await page.$(sel);
-      if (handle) { phoneField = sel; break; }
+      try {
+        await page.waitForSelector(sel, { timeout: 10000 });
+        const handle = await page.$(sel);
+        if (handle) { phoneField = sel; break; }
+      } catch (e) {
+        // continue
+      }
     }
 
     if (!phoneField) {
-      throw new Error('Could not find the phone number input. Inspect the login page and update selectors.');
+      // Save page content for debugging
+      const html = await page.content();
+      fs.writeFileSync('debug_login_page.html', html);
+      throw new Error('Could not find the phone number input. Saved page as debug_login_page.html. Inspect the login page and update selectors.');
     }
 
     // Fill mobile number from .env
@@ -230,15 +272,40 @@ async function runLighthouseOnce(url, runIndex) {
   });
 
   try {
-    const options = {
+  // Use global DEVICE_TYPE set at the start
+  const deviceType = DEVICE_TYPE;
+    let options = {
       port: chrome.port,
       logLevel: 'error',
       output: ['json', 'html'],
       onlyCategories: ['performance','accessibility','best-practices','seo','pwa'],
-      // You can force desktop if you prefer:
-      // formFactor: 'desktop',
-      // screenEmulation: { mobile: false, width: 1366, height: 768, deviceScaleFactor: 1, disabled: false }
+      throttlingMethod: 'simulate', // Force simulated throttling to match DevTools
     };
+    if (deviceType === 'desktop') {
+      options = {
+        ...options,
+        formFactor: 'desktop',
+        screenEmulation: {
+          mobile: false,
+          width: 1350,
+          height: 940,
+          deviceScaleFactor: 1,
+          disabled: false
+        },
+      };
+    } else {
+      options = {
+        ...options,
+        formFactor: 'mobile',
+        screenEmulation: {
+          mobile: true,
+          width: 412,
+          height: 915,
+          deviceScaleFactor: 2.625,
+          disabled: false
+        },
+      };
+    }
 
     const runnerResult = await lighthouse(url, options);
 

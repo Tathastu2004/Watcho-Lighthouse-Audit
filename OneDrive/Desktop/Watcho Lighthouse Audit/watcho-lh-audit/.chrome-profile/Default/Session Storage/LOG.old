@@ -1,3 +1,6 @@
-2025/08/26-22:18:12.689 3f44 Reusing MANIFEST C:\Users\tatha\OneDrive\Desktop\Watcho\watcho-lh-audit\.chrome-profile\Default\Session Storage/MANIFEST-000001
-2025/08/26-22:18:12.704 3f44 Recovering log #3
-2025/08/26-22:18:12.770 3f44 Reusing old log C:\Users\tatha\OneDrive\Desktop\Watcho\watcho-lh-audit\.chrome-profile\Default\Session Storage/000003.log 
+2025/08/27-01:38:17.144 4304 Reusing MANIFEST C:\Users\tatha\OneDrive\Desktop\Watcho Lighthouse Audit\watcho-lh-audit\.chrome-profile\Default\Session Storage/MANIFEST-000001
+2025/08/27-01:38:17.146 4304 Recovering log #3
+2025/08/27-01:38:17.161 4304 Reusing old log C:\Users\tatha\OneDrive\Desktop\Watcho Lighthouse Audit\watcho-lh-audit\.chrome-profile\Default\Session Storage/000003.log 
+2025/08/27-01:38:17.842 5260 Level-0 table #5: started
+2025/08/27-01:38:17.853 5260 Level-0 table #5: 9925 bytes OK
+2025/08/27-01:38:17.858 5260 Delete type=0 #3

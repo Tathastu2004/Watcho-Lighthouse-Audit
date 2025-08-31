@@ -1,5 +1,15 @@
-2025/08/26-22:18:28.677 4138 Reusing MANIFEST C:\Users\tatha\OneDrive\Desktop\Watcho\watcho-lh-audit\.chrome-profile\Default\Local Storage\leveldb/MANIFEST-000001
-2025/08/26-22:18:28.689 4138 Recovering log #13
-2025/08/26-22:18:28.707 4138 Level-0 table #16: started
-2025/08/26-22:18:28.829 4138 Level-0 table #16: 93116 bytes OK
-2025/08/26-22:18:28.844 4138 Delete type=0 #13
+2025/08/27-01:38:45.796 3b74 Reusing MANIFEST C:\Users\tatha\OneDrive\Desktop\Watcho Lighthouse Audit\watcho-lh-audit\.chrome-profile\Default\Local Storage\leveldb/MANIFEST-000001
+2025/08/27-01:38:45.802 3b74 Recovering log #21
+2025/08/27-01:38:45.804 3b74 Reusing old log C:\Users\tatha\OneDrive\Desktop\Watcho Lighthouse Audit\watcho-lh-audit\.chrome-profile\Default\Local Storage\leveldb/000021.log 
+2025/08/27-01:39:45.815 4c38 Level-0 table #25: started
+2025/08/27-01:39:45.821 4c38 Level-0 table #25: 95571 bytes OK
+2025/08/27-01:39:45.824 4c38 Delete type=0 #21
+2025/08/27-01:39:45.824 4c38 Compacting 4@0 + 1@1 files
+2025/08/27-01:39:45.831 4c38 Generated table #26@0: 42 keys, 93692 bytes
+2025/08/27-01:39:45.831 4c38 Compacted 4@0 + 1@1 files => 93692 bytes
+2025/08/27-01:39:45.832 4c38 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/08/27-01:39:45.832 4c38 Delete type=2 #14
+2025/08/27-01:39:45.832 4c38 Delete type=2 #16
+2025/08/27-01:39:45.832 4c38 Delete type=2 #19
+2025/08/27-01:39:45.832 4c38 Delete type=2 #22
+2025/08/27-01:39:45.832 4c38 Delete type=2 #25
